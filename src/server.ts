@@ -68,6 +68,26 @@ const server = net.createServer((socket) => {
         console.error(`Key "${key}" not found.`);
         socket.write(`ERROR: Key "${key}" not found.`);
       }
+    } else if (command === "DEL") {
+      if (!key) {
+        console.error("Received incomplete DEL command.");
+        socket.write("ERROR: DEL command must include key.");
+        return;
+      }
+
+      // Check if the key exists
+      const isKeyExistAndDeletd = store.delete(key);
+
+      // Handle non-exist key
+      if (!isKeyExistAndDeletd) {
+        // Send an error if the key does not exist
+        console.error(`Key "${key}" not found.`);
+        socket.write(`ERROR: Key "${key}" not found.`);
+      } else {
+        // Send success message if the key exists
+        console.log(`DEL Key=${key}`);
+        socket.write(`Success: Value DELETED for Key "${key}".`);
+      }
     }
   });
 
