@@ -15,7 +15,7 @@ const server = net.createServer((socket) => {
     // Convert incoming data(Buffer) to a string and trim any extraneous whitespace
     const request = data.toString().trim();
 
-    // Request form is COM key value >> SET someKey someValue
+    // Request formmat is COM key value >> SET someKey someValue
     const [command = "", key = "", value = ""] = request.split(" ");
 
     // Validate the request commands
@@ -31,7 +31,7 @@ const server = net.createServer((socket) => {
       return;
     }
 
-    // Handle the SET command
+    // Handle SET command
     if (command === "SET") {
       // Validate key and value for the SET command
       if (!key || !value) {
@@ -48,7 +48,9 @@ const server = net.createServer((socket) => {
 
       // Send a success message to the client
       socket.write(`Success: Key "${key}" has been set with value "${value}".`);
-    } else if (command === "GET") {
+    }
+    //Handle GET command
+    else if (command === "GET") {
       if (!key) {
         console.error("Received incomplete GET command.");
         socket.write("ERROR: GET command must include key.");
@@ -68,7 +70,9 @@ const server = net.createServer((socket) => {
         console.error(`Key "${key}" not found.`);
         socket.write(`ERROR: Key "${key}" not found.`);
       }
-    } else if (command === "DEL") {
+    }
+    //Handle DEL command
+    else if (command === "DEL") {
       if (!key) {
         console.error("Received incomplete DEL command.");
         socket.write("ERROR: DEL command must include key.");
@@ -76,10 +80,10 @@ const server = net.createServer((socket) => {
       }
 
       // Check if the key exists
-      const isKeyExistAndDeletd = store.delete(key);
+      const isKeyExistAndDeleted = store.delete(key);
 
       // Handle non-exist key
-      if (!isKeyExistAndDeletd) {
+      if (!isKeyExistAndDeleted) {
         // Send an error if the key does not exist
         console.error(`Key "${key}" not found.`);
         socket.write(`ERROR: Key "${key}" not found.`);
