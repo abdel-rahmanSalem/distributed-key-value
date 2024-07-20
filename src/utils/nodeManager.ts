@@ -1,10 +1,11 @@
 import * as net from "net";
-import { loadConfig } from "./utils";
 
-const config = loadConfig();
-const nodes = config.nodes;
-
-export function forwardRequest(command: string, key: string, value: string) {
+export function forwardRequest(
+  command: string,
+  key: string,
+  value: string,
+  nodes: string[]
+) {
   // Iterate over each node to create socket connection then write the command
   // Each node acting as a server
   nodes.forEach((node: any) => {

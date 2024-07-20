@@ -2,7 +2,11 @@ import * as net from "net";
 import { store } from "./utils/utils";
 import { forwardRequest } from "./utils/nodeManager";
 
-export function handleRequest(socket: net.Socket, data: Buffer) {
+export function handleRequest(
+  socket: net.Socket,
+  data: Buffer,
+  nodes: string[]
+) {
   // Convert incoming data(Buffer) to a string and trim any extraneous whitespace
   const request = data.toString().trim();
 
@@ -41,7 +45,7 @@ export function handleRequest(socket: net.Socket, data: Buffer) {
     socket.write(`Success: Key "${key}" has been set with value "${value}".`);
 
     // Forward the SET request to other nodes
-    forwardRequest(command, key, value);
+    forwardRequest(command, key, value, nodes);
   }
   //Handle GET command
   else if (command === "GET") {
@@ -87,7 +91,7 @@ export function handleRequest(socket: net.Socket, data: Buffer) {
       socket.write(`Success: Value DELETED for Key "${key}".`);
 
       // Forward the DEL request to other nodes
-      forwardRequest(command, key, "");
+      forwardRequest(command, key, "", nodes);
     }
   }
 }

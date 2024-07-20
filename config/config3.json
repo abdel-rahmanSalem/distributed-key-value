@@ -1,0 +1,4 @@
+{
+  "port": 3002,
+  "nodes": ["localhost:3000", "localhost:3001"]
+}
