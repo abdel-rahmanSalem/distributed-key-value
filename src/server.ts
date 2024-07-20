@@ -48,6 +48,26 @@ const server = net.createServer((socket) => {
 
       // Send a success message to the client
       socket.write(`Success: Key "${key}" has been set with value "${value}".`);
+    } else if (command === "GET") {
+      if (!key) {
+        console.error("Received incomplete GET command.");
+        socket.write("ERROR: GET command must include key.");
+        return;
+      }
+
+      // Retrieve the desired value
+      const retrievedValue = store.get(key);
+
+      // Check if the key exists
+      if (retrievedValue !== undefined) {
+        // Send the value if the key exists
+        console.log(`GET Key=${key} value=${retrievedValue}`);
+        socket.write(`Success: Value "${retrievedValue}" for Key "${key}".`);
+      } else {
+        // Send an error if the key does not exist
+        console.error(`Key "${key}" not found.`);
+        socket.write(`ERROR: Key "${key}" not found.`);
+      }
     }
   });
 
