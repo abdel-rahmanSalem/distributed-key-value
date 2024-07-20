@@ -1,14 +1,13 @@
 import * as net from "net";
+import { loadConfig } from "./utils";
 
-export function forwardRequest(
-  command: string,
-  key: string,
-  value: string,
-  nodes: string[]
-) {
+const config = loadConfig();
+const nodes = config.nodes;
+
+export function forwardRequest(command: string, key: string, value: string) {
   // Iterate over each node to create socket connection then write the command
   // Each node acting as a server
-  nodes.forEach((node) => {
+  nodes.forEach((node: any) => {
     // Node format is "host:port"
     const [host, port] = node.split(":");
 
