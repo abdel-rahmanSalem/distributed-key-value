@@ -1,7 +1,9 @@
 import * as net from "net";
+import { loadConfig } from "./utils/utils";
 
 // Define the port on which the server will listen
-const port = process.env.PORT || 3000;
+const config = loadConfig();
+const port = config.port;
 
 // Global map to store key-value pairs
 const store = new Map<any, any>();
