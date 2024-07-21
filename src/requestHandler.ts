@@ -35,6 +35,13 @@ export function handleRequest(
       return;
     }
 
+    // Check if the key already exists
+    if (store.has(key)) {
+      console.error(`Key "${key}" already exists.`);
+      socket.write(`ERROR: Key "${key}" already exists, It must be unique.`);
+      return;
+    }
+
     // Store the key-value pair in the global store
     store.set(key, value);
 

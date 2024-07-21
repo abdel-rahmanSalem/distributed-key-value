@@ -3,9 +3,9 @@ import * as net from "net";
 // Create a new instance of a TCP socket client
 const client = new net.Socket();
 
-// Connect to the TCP server at localhost on port 3000
+// Connect to the TCP server at localhost on port 3000 which is server A
 client.connect(3000, "localhost", () => {
-  console.log("Connected to server.");
+  console.log("Connected to server A.");
 
   // Send a SET command with key and value to the server
   client.write("SET testKey testValue");

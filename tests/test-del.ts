@@ -3,9 +3,9 @@ import * as net from "net";
 // Create a new instance of a TCP socket client
 const client = new net.Socket();
 
-// Connect to the TCP server at localhost on port 3000
-client.connect(3000, "localhost", () => {
-  console.log("Connected to server.");
+// Connect to the TCP server at localhost on port 3002 which is server C
+client.connect(3002, "localhost", () => {
+  console.log("Connected to server C.");
 
   // Send a DEL command with key and value to the server
   client.write("DEL testKey");

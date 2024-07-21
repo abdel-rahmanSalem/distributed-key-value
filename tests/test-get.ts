@@ -3,9 +3,9 @@ import * as net from "net";
 // Create a new instance of a TCP socket client
 const client = new net.Socket();
 
-// Connect to the TCP server at localhost on port 3000
-client.connect(3000, "localhost", () => {
-  console.log("Connected to server.");
+// Connect to the TCP server at localhost on port 3001 which is server B
+client.connect(3001, "localhost", () => {
+  console.log("Connected to server B.");
 
   // Send a GET command with key and value to the server
   client.write("GET testKey");
