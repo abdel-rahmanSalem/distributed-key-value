@@ -93,4 +93,4 @@ A distributed key-value store implemented with Node.js and TypeScript. The syste
 
 ## Under Development
 
-This project is still under development. It's my playground to learn and experiment, so expect frequent updates and changes. Feel free to explore, suggest improvements, or even fork the project and build your own version!
+This project is still under development. It's my playground to learn and experiment, so expect frequent updates and changes. Feel free to explore, suggest improvements, or even fork the project and build your own version :)
