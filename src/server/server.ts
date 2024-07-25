@@ -1,5 +1,5 @@
 import * as net from "net";
-import { handleRequest } from "./requestHandler";
+import { handleRequest } from "../controllers/requestHandler";
 
 // Create new instance server
 export function createServer(port: number, nodes: string[] = []) {

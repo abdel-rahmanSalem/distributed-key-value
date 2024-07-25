@@ -1,6 +1,6 @@
 import * as net from "net";
-import { store } from "./utils/utils";
-import { forwardRequest } from "./utils/nodeManager";
+import { store } from "../utils/utils";
+import { forwardRequest } from "../services/nodeManager";
 
 export function handleRequest(
   socket: net.Socket,
