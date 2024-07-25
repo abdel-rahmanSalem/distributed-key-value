@@ -11,7 +11,8 @@ export function handleRequest(
   const request = data.toString().trim();
 
   // Request formmat is COM key value >> SET someKey someValue
-  const [command = "", key = "", value = ""] = request.split(" ");
+  const [command = "", key = "", value = "", forwarded = ""] =
+    request.split(" ");
 
   // Validate the request commands
   const validCommand =
@@ -52,7 +53,7 @@ export function handleRequest(
     socket.write(`Success: Key "${key}" has been set with value "${value}".`);
 
     // Forward the SET request to other nodes
-    forwardRequest(command, key, value, nodes);
+    forwardRequest(command, key, value, nodes, forwarded);
   }
   //Handle GET command
   else if (command === "GET") {
@@ -98,7 +99,7 @@ export function handleRequest(
       socket.write(`Success: Value DELETED for Key "${key}".`);
 
       // Forward the DEL request to other nodes
-      forwardRequest(command, key, "", nodes);
+      forwardRequest(command, key, "", nodes, forwarded);
     }
   }
 }
