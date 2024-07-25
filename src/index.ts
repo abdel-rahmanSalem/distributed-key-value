@@ -1,4 +1,4 @@
-import { createServer } from "./server";
+import { createServer } from "./server/server";
 import { loadConfig } from "./utils/utils";
 
 // Load configuration file specified as a command-line argument

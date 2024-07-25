@@ -2,7 +2,7 @@ import * as net from "net";
 import { handleRequest } from "../controllers/requestHandler";
 
 // Create new instance server
-export function createServer(port: number, nodes: string[] = []) {
+export function createServer(port: number, nodes: string[]) {
   const server = net.createServer((socket) => {
     console.log(`Client connected on port ${port}`);
 
