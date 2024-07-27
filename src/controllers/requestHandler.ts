@@ -1,15 +1,17 @@
 import * as net from "net";
 import { delKey, getKey, setKey } from "../services/storeService";
+import Node from "../types/node";
 
 let clientMessage: string;
 
-export function handleRequest(
-  socket: net.Socket,
-  data: Buffer,
-  nodes: string[]
-) {
+export function handleRequest(socket: net.Socket, data: Buffer, nodes: Node[]) {
   // Convert incoming data(Buffer) to a string and trim any extra whitespace
   const request = data.toString().trim();
+
+  if (request === "HEARTBEAT") {
+    socket.write("ALIVE");
+    return;
+  }
 
   // Request formmat is COM key value >> SET someKey someValue
   const [command = "", key = "", value = "", forwarded = ""] =
@@ -34,7 +36,7 @@ export function handleRequest(
   }
   //Handle GET command
   else if (command === "GET") {
-    clientMessage = getKey(key, forwarded, nodes);
+    clientMessage = getKey(key);
     socket.write(clientMessage);
   }
   //Handle DEL command

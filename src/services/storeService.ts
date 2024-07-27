@@ -1,11 +1,12 @@
 import { store } from "../utils/utils";
 import { forwardRequest } from "./nodeManager";
+import Node from "../types/node";
 
 export function setKey(
   key: string,
   value: string,
   forwarded: string,
-  nodes: string[]
+  nodes: Node[]
 ): string {
   // Validate Client command >> SET command
   if (!key || !value) {
@@ -31,7 +32,7 @@ export function setKey(
   return `Success: Key "${key}" has been set with value "${value}".`;
 }
 
-export function getKey(key: string, forwarded: string, node: string[]): string {
+export function getKey(key: string): string {
   // Validate Client command >> GET command
   if (!key) {
     console.error("Received incomplete GET command.");
@@ -53,7 +54,7 @@ export function getKey(key: string, forwarded: string, node: string[]): string {
   }
 }
 
-export function delKey(key: string, forwarded: string, nodes: string[]) {
+export function delKey(key: string, forwarded: string, nodes: Node[]) {
   // Validate Client command >> DEL command
   if (!key) {
     console.error("Received incomplete DEL command.");
