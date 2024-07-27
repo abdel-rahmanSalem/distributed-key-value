@@ -17,31 +17,46 @@ export function startHeartbeat(nodes: Node[]) {
 
       const client = new net.Socket();
 
+      let heartbeatTimeout: NodeJS.Timeout;
+
       client.connect(Number(port), host, () => {
         client.write("HEARTBEAT");
+
+        // Ensure client is destroyed after heartbeat timeout
+        heartbeatTimeout = setTimeout(() => {
+          if (!client.destroyed) {
+            console.error(`Server hosted on port: ${node.port} is DEAD`);
+            node.isActive = false;
+            client.destroy();
+          }
+        }, HEARTBEAT_TIMEOUT);
       });
 
+      // Handle the response expected as "ALIVE"
       client.on("data", (data) => {
         const response = data.toString().trim();
+
+        clearTimeout(heartbeatTimeout);
+
         if (response === "ALIVE") {
           node.isActive = true;
           console.log(`Server hosted on port: ${node.port} is ALIVE`);
+        } else {
+          node.isActive = false;
+          console.error(
+            `Unexpected response from server on port: ${node.port}`
+          );
         }
-        // Ensure the client is destroyed after receiving the response
         client.destroy();
       });
 
       client.on("error", (err) => {
-        console.error(
-          `Error sending heartbeat to server hosted on port: ${node.port}, ${err.message}`
-        );
-        // Ensure the client is destroyed on error
-        client.destroy();
-      });
+        clearTimeout(heartbeatTimeout);
 
-      client.on("timeout", () => {
         console.error(
-          `Heartbeat timeout for server hosted on port: ${node.port}`
+          `Server hosted on port: ${node.port} is DEAD${
+            err ? `, due to ${err}` : "."
+          }`
         );
         node.isActive = false;
         client.destroy();
@@ -52,16 +67,8 @@ export function startHeartbeat(nodes: Node[]) {
         console.log(
           `Connection ended with server hosted on port: ${node.port}`
         );
+        node.isActive = false;
       });
-
-      // Ensure client is destroyed after heartbeat timeout
-      setTimeout(() => {
-        if (!client.destroyed) {
-          node.isActive = false;
-          console.log(`Server hosted on port: ${node.port} is DEAD`);
-          client.destroy();
-        }
-      }, HEARTBEAT_TIMEOUT);
     });
   }, HEARTBEAT_INTERVAL);
 }
