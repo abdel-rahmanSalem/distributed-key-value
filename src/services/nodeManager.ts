@@ -14,7 +14,12 @@ export function forwardRequest(
   // Iterate over each node to create socket connection then write the command
   // Each node acting as a server
   nodes.forEach((node: Node) => {
-    const { host, port } = node;
+    const { host, port, isActive } = node;
+
+    if (!isActive) {
+      console.error(`Server on port ${port} is DEAD.`);
+      return;
+    }
 
     // Create a new socket connection to the node
     const client = new net.Socket();
@@ -27,13 +32,15 @@ export function forwardRequest(
     // Handle data received from the node
     client.on("data", (data) => {
       // Log the response from the node
-      console.log(`Response from ${node}: ${data.toString()}`);
+      console.log(
+        `Response from server on port ${node.port}: ${data.toString()}`
+      );
 
       client.destroy();
     });
 
     client.on("error", (err) => {
-      console.error(`Error with ${node}: ${err.message}`);
+      console.error(`Error with server on port ${node.port}: ${err.message}`);
     });
   });
 }
