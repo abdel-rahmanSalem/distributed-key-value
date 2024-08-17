@@ -12,9 +12,11 @@ export function createServer(port: number, nodes: Node[]) {
     });
 
     // Event handler for the client connection being closed
-    // socket.on("close", (hadError) => {
-    //   console.log(`Client disconnected${hadError ? " due to an error." : "."}`);
-    // });
+    socket.on("close", (hadError) => {
+      console.warn(
+        `Client disconnected${hadError ? " due to an error." : "."}`
+      );
+    });
 
     // Event handler for errors on the socket
     socket.on("error", (err) => {

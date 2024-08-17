@@ -19,7 +19,10 @@ export function handleRequest(socket: net.Socket, data: Buffer, nodes: Node[]) {
 
   // Validate the request command
   const validCommand: boolean =
-    command === "GET" || command === "SET" || command === "DEL";
+    command === "GET" ||
+    command === "SET" ||
+    command === "DEL" ||
+    command === "UPD";
 
   // Handle invalid or empty commands
   if (!command || !validCommand) {
