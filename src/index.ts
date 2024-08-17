@@ -1,17 +1,33 @@
+import select from "@inquirer/select";
 import { createServer } from "./server/server";
-import { getConfigName, loadConfig } from "../src/config";
-import { startHeartbeat } from "./services/heartbeat";
+import { loadConfig } from "../src/config";
 
-// Load configuration file specified as a command-line argument path[3]
-try {
-  const configFileName = getConfigName();
+async function start() {
+  const configFileName = await select({
+    message: "Please choose the server you want to run:",
+    choices: [
+      {
+        name: "Server A",
+        value: "config1.json",
+        description: "Run Server A on port 3000.",
+      },
+      {
+        name: "Server B",
+        value: "config2.json",
+        description: "Run Server B on port 3001.",
+      },
+      {
+        name: "Server C",
+        value: "config3.json",
+        description: "Run Server C on port 3002.",
+      },
+    ],
+  });
+
   const config = loadConfig(configFileName);
-
-  startHeartbeat(config.nodes);
 
   // Start the server with the loaded configuration
   createServer(config.port, config.nodes);
-  console.log("Distributed key-value store server started.");
-} catch (err: any) {
-  console.error("Error loading configuration:", err.message);
 }
+
+start();

@@ -25,7 +25,9 @@ export function startHeartbeat(nodes: Node[]) {
         // Ensure client is destroyed after heartbeat timeout
         heartbeatTimeout = setTimeout(() => {
           if (!client.destroyed) {
-            console.error(`Server hosted on port: ${node.port} is DEAD`);
+            console.warn(
+              `Heartbeat to server on port ${port} timed out. Marking as DEAD.`
+            );
             node.isActive = false;
             client.destroy();
           }
@@ -40,11 +42,11 @@ export function startHeartbeat(nodes: Node[]) {
 
         if (response === "ALIVE") {
           node.isActive = true;
-          console.log(`Server hosted on port: ${node.port} is ALIVE`);
+          console.log(`Server on port ${port} is ACTIVE and responding.`);
         } else {
           node.isActive = false;
           console.error(
-            `Unexpected response from server on port: ${node.port}`
+            `Unexpected response from server on port ${port}: ${response}. Marking as DEAD.`
           );
         }
         client.destroy();
@@ -52,11 +54,8 @@ export function startHeartbeat(nodes: Node[]) {
 
       client.on("error", (err) => {
         clearTimeout(heartbeatTimeout);
-
-        console.error(
-          `Server hosted on port: ${node.port} is DEAD${
-            err ? `, due to ${err}` : "."
-          }`
+        console.warn(
+          `Heartbeat to server on port ${port} timed out. Marking as DEAD.`
         );
         node.isActive = false;
         client.destroy();
@@ -64,9 +63,7 @@ export function startHeartbeat(nodes: Node[]) {
 
       // Handle client end to prevent further writes after the client has been ended
       client.on("end", () => {
-        console.log(
-          `Connection ended with server hosted on port: ${node.port}`
-        );
+        console.log(`Connection with server on port ${port} ended.`);
         node.isActive = false;
       });
     });
