@@ -1,7 +1,7 @@
 {
   "port": 3001,
   "nodes": [
-    { "host": "localhost", "port": 3000, "isActive": false },
-    { "host": "localhost", "port": 3002, "isActive": false }
+    { "host": "localhost", "port": 3000, "status": "DEAD" },
+    { "host": "localhost", "port": 3002, "status": "DEAD" }
   ]
 }

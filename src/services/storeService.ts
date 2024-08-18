@@ -1,4 +1,4 @@
-import { store } from "../utils/utils";
+import store from "../data/store";
 import { forwardRequest } from "./nodeManager";
 import Node from "../types/node";
 

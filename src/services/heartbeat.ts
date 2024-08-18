@@ -1,5 +1,7 @@
 import * as net from "net";
 import Node from "../types/node";
+import { recoverNode } from "./nodeManager";
+import commands from "../data/commands";
 
 const HEARTBEAT_INTERVAL = 5000;
 const HEARTBEAT_TIMEOUT = 3000;
@@ -28,28 +30,41 @@ export function startHeartbeat(nodes: Node[]) {
             console.warn(
               `Heartbeat to server on port ${port} timed out. Marking as DEAD.`
             );
-            node.isActive = false;
+            node.status = "DEAD";
             client.destroy();
           }
         }, HEARTBEAT_TIMEOUT);
       });
 
       // Handle the response expected as "ALIVE"
-      client.on("data", (data) => {
+      client.on("data", async (data) => {
         const response = data.toString().trim();
 
         clearTimeout(heartbeatTimeout);
 
         if (response === "ALIVE") {
-          node.isActive = true;
-          console.log(`Server on port ${port} is ACTIVE and responding.`);
-        } else {
-          node.isActive = false;
-          console.error(
-            `Unexpected response from server on port ${port}: ${response}. Marking as DEAD.`
-          );
+          if (node.status === "DEAD") {
+            node.status = "RECOVER";
+            console.log(`Server on port ${port} is RECOVERING...`);
+            try {
+              await recoverNode(Number(port), host, commands);
+              node.status = "RECOVERED";
+              console.log(`Server on port ${port} is RECOVERED.`);
+            } catch (error) {
+              console.error(`Error during node recovery: ${error}`);
+              node.status = "RECOVER_FAILED";
+            }
+          } else if (node.status === "RECOVERED") {
+            node.status = "ACTIVE";
+            console.log(`Server on port ${port} is ACTIVE and responding...`);
+          } else if (node.status === "ACTIVE") {
+            console.log(`Server on port ${port} is ACTIVE and responding...`);
+          }
+
+          if (node.status === "ACTIVE") {
+            client.destroy();
+          }
         }
-        client.destroy();
       });
 
       client.on("error", (err) => {
@@ -57,14 +72,14 @@ export function startHeartbeat(nodes: Node[]) {
         console.warn(
           `Heartbeat to server on port ${port} timed out. Marking as DEAD.`
         );
-        node.isActive = false;
+        node.status = "DEAD";
         client.destroy();
       });
 
       // Handle client end to prevent further writes after the client has been ended
       client.on("end", () => {
         console.log(`Connection with server on port ${port} ended.`);
-        node.isActive = false;
+        node.status = "DEAD";
       });
     });
   }, HEARTBEAT_INTERVAL);
